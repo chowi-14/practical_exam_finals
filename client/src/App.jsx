@@ -22,6 +22,8 @@ function App() {
           <p>Age: {student.age}</p>
         </div>
       ))}
+
+      <h1>Hello</h1>
     </div>
   )
 }
