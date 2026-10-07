@@ -8,15 +8,15 @@ const initialForm = {
 }
 
 function App() {
-  const [students, setStudents] = useState([])
+  // const [students, setStudents] = useState([])
   const [form, setForm] = useState(initialForm)
 
-  useEffect(() => {
-    axios.get("http://localhost:5000/students")
-      .then((response) => {
-        setStudents(response.data)
-      })
-  }, [])
+  // useEffect(() => {
+  //   axios.get("http://localhost:5000/students")
+  //     .then((response) => {
+  //       setStudents(response.data)
+  //     })
+  // }, [])
 
   const handleChange = (e) => {
     setForm({
@@ -24,8 +24,19 @@ function App() {
     })
   }
 
-  const handleSubmit = () => {
-    
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    try {
+      fetch("http://localhost:5000/students", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({...form, age: Number(form.age)})
+      })
+      setForm(initialForm)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -35,17 +46,17 @@ function App() {
 
       <form onSubmit={handleSubmit}>
         <label>Name: </label>
-        <input type="text" value={form.name} required onChange={handleChange} placeholder="Enter your Name"></input>
+        <input type="text" required onChange={handleChange} name="name" value={form.name} placeholder="Enter your Name"></input>
         <br></br>
         <br></br>
 
         <label>Course: </label>
-        <input type="text" value={form.course} required onChange={handleChange} placeholder="Enter your Course"></input>
+        <input type="text" value={form.course} required onChange={handleChange} name="course" placeholder="Enter your Course"></input>
         <br></br>
         <br></br>
 
         <label>Age:</label>
-        <input type="text" value={form.age} required onChange={handleChange} placeholder="Enter your Age"></input>
+        <input type="text" value={form.age} required onChange={handleChange} name="age" placeholder="Enter your Age"></input>
         <br></br>
         <br></br>
 
