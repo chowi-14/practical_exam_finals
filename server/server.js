@@ -37,9 +37,35 @@ app.get("/", (req, res) => {
     res.send("Server is running!")
 })
 
+//CREATE
+app.post("/students", async (req, res) => {
+    const students = await Student.create(req.body)
+    res.json (students)
+})
+
+//READ ALL
 app.get("/students", async (req, res) => {
     const students = await Student.find()
+    res.json(students)
+})
 
+//READ ONE
+app.get("/students/:id", async (req, res) => {
+    const students = await Student.findById(req.params.id)
+    res.json(students)
+})
+
+//UPDATE
+app.put("/students/:id", async(req, res) => {
+    const students = await Students.findByIdAndUpdate(
+        req.params.id,
+        req.body, { new: true }
+    )
+})
+
+//DELETE
+app.delete("/students/:id", async(req, res) => {
+    const students = await Student.findByIdAndDelete(req.params.id)
     res.json(students)
 })
 
