@@ -58,16 +58,17 @@ function App() {
   }
 
   //save
-  const handleSubmitEdit = (e) => {
-    e.preventDefault()
-
+  const handleSave = async () => {
     try {
-      fetch(`http://localhost:5000/students/${id}`, {
+      fetch(`http://localhost:5000/students/${editingId}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({...editForm, age: Number(form.age)})
       })
-      // setEditForm(initialForm)
+      
+      const updated = await response.json()
+      setStudents(students.map((s) => s._id === updated._id ? updated : s))
+      setEditingId(null)
     } catch (error) {
       console.log(error)
     }
@@ -117,8 +118,9 @@ function App() {
           <label>Course: </label>
           <input type="text" onChange={handleChangeEdit} name="course" value={editForm.course}></input>
           <label>Age: </label>
-          <input type="text" onChange={handleChangeEdit} name="age" value={editForm.age}></input>
-          <button onClick={() => handleSubmitEdit(student._id)}>Save</button>
+          <input type="number" onChange={handleChangeEdit} name="age" value={editForm.age}></input>
+          <button onClick={handleSave}>Save</button>
+          <button onClick={() => setEditingId(null)}>Cancel</button>
         </div>
        ) : (
         <div key={student._id}>
