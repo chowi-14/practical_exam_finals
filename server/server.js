@@ -40,7 +40,7 @@ app.get("/", (req, res) => {
 //CREATE
 app.post("/students", async (req, res) => {
     const students = await Student.create(req.body)
-    res.json (students)
+    res.json(students)
 })
 
 //READ ALL
@@ -56,15 +56,16 @@ app.get("/students/:id", async (req, res) => {
 })
 
 //UPDATE
-app.put("/students/:id", async(req, res) => {
-    const students = await Students.findByIdAndUpdate(
+app.put("/students/:id", async (req, res) => {
+    const students = await Student.findByIdAndUpdate(
         req.params.id,
         req.body, { new: true }
     )
+    res.json(students)
 })
 
 //DELETE
-app.delete("/students/:id", async(req, res) => {
+app.delete("/students/:id", async (req, res) => {
     const students = await Student.findByIdAndDelete(req.params.id)
     res.json(students)
 })

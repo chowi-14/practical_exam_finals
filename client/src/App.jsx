@@ -13,7 +13,6 @@ function App() {
   const [editForm, setEditForm] = useState()
   const [editingId, setEditingId] = useState()
   const [students, setStudents] = useState([])
-  const [student, setStudent] = useState()
   
   useEffect(() => {
     axios.get("http://localhost:5000/students")
@@ -28,8 +27,14 @@ function App() {
     })
   }
 
+  const handleChangeEdit = (e) => {
+    setEditForm({
+      ...editForm, [e.target.name]: e.target.value
+    })
+  }
+
   //create
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     try {
@@ -39,6 +44,8 @@ function App() {
         body: JSON.stringify({...form, age: Number(form.age)})
       })
       setForm(initialForm)
+      const additional = students.map((s)=> s._id !== id) 
+      setStudents(additional)
     } catch (error) {
       console.log(error)
     }
@@ -46,10 +53,36 @@ function App() {
 
   //edit
   const handleEdit = (student) => {
-    setIsEditing(true)
+    setEditingId(student._id)
+    setEditForm(student)
+  }
+
+  //save
+  const handleSubmitEdit = (e) => {
+    e.preventDefault()
+
+    try {
+      fetch(`http://localhost:5000/students/${id}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({...editForm, age: Number(form.age)})
+      })
+      // setEditForm(initialForm)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   //delete
+  const handleDelete = async(id) => {
+    fetch(`http://localhost:5000/students/${id}`, {
+      method: "DELETE"
+    })
+
+    const remaining = students.filter((s)=> s._id !== id) 
+    setStudents(remaining)
+  }
+  
 
   return (
     <div>
@@ -68,7 +101,7 @@ function App() {
         <br></br>
 
         <label>Age:</label>
-        <input type="text" value={form.age} required onChange={handleChange} name="age" placeholder="Enter your Age"></input>
+        <input type="number" value={form.age} required onChange={handleChange} name="age" placeholder="Enter your Age"></input>
         <br></br>
         <br></br>
 
@@ -77,31 +110,25 @@ function App() {
 
       <br></br>
       <h2>List of Students</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Course</th>
-              <th>Age</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map((student => (
-              <tr key={student._i}>
-                <td>{student.name}</td>
-                <td>{student.course}</td>
-                <td>{student.age}</td>
-                <td>
-                  <button>Edit</button>
-                  <button>Delete</button>
-                </td>
-              </tr>
-            )))
-
-            }
-           
-          </tbody>
-        </table>
+       {students.map((student) => editingId === student._id ? (
+        <div key={student._id}>
+          <label>Name: </label>
+          <input type="text" onChange={handleChangeEdit} name="name" value={editForm.name}></input>
+          <label>Course: </label>
+          <input type="text" onChange={handleChangeEdit} name="course" value={editForm.course}></input>
+          <label>Age: </label>
+          <input type="text" onChange={handleChangeEdit} name="age" value={editForm.age}></input>
+          <button onClick={() => handleSubmitEdit(student._id)}>Save</button>
+        </div>
+       ) : (
+        <div key={student._id}>
+          <p>Name: {student.name}</p>
+          <p>Course: {student.course}</p>
+          <p>Age: {student.age}</p>
+          <button onClick={() => handleEdit(student)}>Edit</button>
+          <button onClick={() => handleDelete(student._id)}>Delete</button>
+        </div>
+       ))}
     </div>
   )
 }
