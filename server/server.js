@@ -59,7 +59,8 @@ app.get("/students/:id", async (req, res) => {
 app.put("/students/:id", async (req, res) => {
     const students = await Student.findByIdAndUpdate(
         req.params.id,
-        req.body, { new: true }
+        req.body,
+        { new: true }
     )
     res.json(students)
 })

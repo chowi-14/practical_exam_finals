@@ -9,7 +9,6 @@ const initialForm = {
 
 function App() {
   const [form, setForm] = useState(initialForm)
-  const [isEditing, setIsEditing] = useState(false)
   const [editForm, setEditForm] = useState()
   const [editingId, setEditingId] = useState()
   const [students, setStudents] = useState([])
@@ -44,8 +43,12 @@ function App() {
         body: JSON.stringify({...form, age: Number(form.age)})
       })
       setForm(initialForm)
-      const additional = students.map((s)=> s._id !== id) 
-      setStudents(additional)
+
+      axios.get("http://localhost:5000/students")
+      .then((response) => {
+        setStudents(response.data)
+      })
+      
     } catch (error) {
       console.log(error)
     }
@@ -63,11 +66,14 @@ function App() {
       fetch(`http://localhost:5000/students/${editingId}`, {
         method: "PUT",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({...editForm, age: Number(form.age)})
+        body: JSON.stringify({...editForm, age: Number(editForm.age)})
       })
       
-      const updated = await response.json()
-      setStudents(students.map((s) => s._id === updated._id ? updated : s))
+      axios.get("http://localhost:5000/students")
+      .then((response) => {
+        setStudents(response.data)
+      })
+
       setEditingId(null)
     } catch (error) {
       console.log(error)
@@ -92,7 +98,7 @@ function App() {
 
       <form onSubmit={handleSubmit}>
         <label>Name: </label>
-        <input type="text" required onChange={handleChange} name="name" value={form.name} placeholder="Enter your Name"></input>
+        <input type="text" required value={form.name} onChange={handleChange} name="name" placeholder="Enter your Name"></input>
         <br></br>
         <br></br>
 
