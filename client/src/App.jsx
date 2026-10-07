@@ -8,15 +8,19 @@ const initialForm = {
 }
 
 function App() {
-  // const [students, setStudents] = useState([])
   const [form, setForm] = useState(initialForm)
-
-  // useEffect(() => {
-  //   axios.get("http://localhost:5000/students")
-  //     .then((response) => {
-  //       setStudents(response.data)
-  //     })
-  // }, [])
+  const [isEditing, setIsEditing] = useState(false)
+  const [editForm, setEditForm] = useState()
+  const [editingId, setEditingId] = useState()
+  const [students, setStudents] = useState([])
+  const [student, setStudent] = useState()
+  
+  useEffect(() => {
+    axios.get("http://localhost:5000/students")
+      .then((response) => {
+        setStudents(response.data)
+      })
+  }, [])
 
   const handleChange = (e) => {
     setForm({
@@ -24,6 +28,7 @@ function App() {
     })
   }
 
+  //create
   const handleSubmit = (e) => {
     e.preventDefault()
 
@@ -38,6 +43,13 @@ function App() {
       console.log(error)
     }
   }
+
+  //edit
+  const handleEdit = (student) => {
+    setIsEditing(true)
+  }
+
+  //delete
 
   return (
     <div>
@@ -63,6 +75,33 @@ function App() {
         <button type="submit">Submit</button>
       </form>
 
+      <br></br>
+      <h2>List of Students</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Course</th>
+              <th>Age</th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.map((student => (
+              <tr key={student._i}>
+                <td>{student.name}</td>
+                <td>{student.course}</td>
+                <td>{student.age}</td>
+                <td>
+                  <button>Edit</button>
+                  <button>Delete</button>
+                </td>
+              </tr>
+            )))
+
+            }
+           
+          </tbody>
+        </table>
     </div>
   )
 }
